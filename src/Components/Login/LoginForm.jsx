@@ -1,31 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "../../Hooks/useForm";
 import Button from "../Form/Button";
 import Input from "../Form/Input";
-import URL from "../Url";
+import { UserContext } from "../../Context/UserContext";
 
 function LoginForm() {
   const username = useForm();
   const password = useForm();
 
-  function handleSubmit(event) {
+  const { userLogin} = useContext(UserContext);
+
+  async function handleSubmit(event) {
     event.preventDefault();
     if (username.validate() && password.validate()) {
-      fetch(`${URL}/jwt-auth/v1/token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(),
-      })
-        .then((res) => {
-          console.log(res);
-          return res.json();
-        })
-        .then((json) => {
-          console.log(json);
-        });
+      userLogin(username.value, password.value);
     }
   }
 
