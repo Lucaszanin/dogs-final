@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TOKEN_POST, TOKEN_VALIDATE_POST, USER_GET } from "../api";
 
 export const UserContext = createContext();
@@ -8,27 +9,19 @@ export function UserStorage({ children }) {
   const [login, setLogin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    async function autoLogin() {
-      const token = window.localStorage.getItem("token");
-      if (token) {
-        try {
-          setError(null);
-          setLoading(true);
-          const { url, options } = TOKEN_VALIDATE_POST(token);
-          const response = await fetch(url, options);
-          if (!response.ok) throw new Error("Token inválido");
-          await getUser(token);
-        } catch (err) {
-          userLogout();
-        } finally {
-          setLoading(false);
-        }
-      }
-    }
-    autoLogin();
-  }, []);
+  const userLogout = useCallback(
+    async function () {
+      setData(null);
+      setError(null);
+      setLoading(false);
+      setLogin(false);
+      window.localStorage.removeItem("token");
+      navigate("/login");
+    },
+    [navigate]
+  );
 
   async function getUser(token) {
     const { url, options } = USER_GET(token);
@@ -48,6 +41,7 @@ export function UserStorage({ children }) {
       const { token } = await tokenRes.json();
       window.localStorage.setItem("token", token);
       await getUser(token);
+      navigate("/conta");
     } catch (err) {
       setError(err.message);
       setLogin(false);
@@ -56,13 +50,26 @@ export function UserStorage({ children }) {
     }
   }
 
-  async function userLogout() {
-    setData(null);
-    setError(null);
-    setLoading(false);
-    setLogin(false);
-    window.localStorage.removeItem("token");
-  }
+  useEffect(() => {
+    async function autoLogin() {
+      const token = window.localStorage.getItem("token");
+      if (token) {
+        try {
+          setError(null);
+          setLoading(true);
+          const { url, options } = TOKEN_VALIDATE_POST(token);
+          const response = await fetch(url, options);
+          if (!response.ok) throw new Error("Token inválido");
+          await getUser(token);
+        } catch (err) {
+          await userLogout();
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+    autoLogin();
+  }, [userLogout]);
 
   return (
     <UserContext.Provider
