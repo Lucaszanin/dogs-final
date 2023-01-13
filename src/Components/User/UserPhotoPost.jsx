@@ -20,7 +20,7 @@ function UserPhotoPost() {
     if (data) navigate("/conta");
   }, [data, navigate]);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData();
     formData.append("img", img.raw);
@@ -29,8 +29,7 @@ function UserPhotoPost() {
     formData.append("idade", idade.value);
 
     const token = window.localStorage.getItem("token");
-    const { url, options } = PHOTO_POST(formData, token);
-
+    const { url, options } = await PHOTO_POST(formData, token);
     request(url, options);
   }
 
