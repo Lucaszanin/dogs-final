@@ -17,7 +17,6 @@ function useFetch() {
     } catch (err) {
       json = null;
       setError(err.message);
-      console.log(err.mensagem);
     } finally {
       setData(json);
       setLoading(false);
