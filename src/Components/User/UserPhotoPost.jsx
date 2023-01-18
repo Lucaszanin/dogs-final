@@ -8,15 +8,15 @@ import { PHOTO_POST } from "../../api";
 import { Error } from "../Helper/Error";
 import { useNavigate } from "react-router-dom";
 
-function UserPhotoPost() {
+const UserPhotoPost = () => {
   const nome = useForm();
   const peso = useForm("number");
   const idade = useForm("number");
-  const [img, setImg] = useState({});
+  const [img, setImg] = React.useState({});
   const { data, error, loading, request } = useFetch();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (data) navigate("/conta");
   }, [data, navigate]);
 
@@ -29,8 +29,8 @@ function UserPhotoPost() {
     formData.append("idade", idade.value);
 
     const token = window.localStorage.getItem("token");
-    const { url, options } = await PHOTO_POST(formData, token);
-    request(url, options);
+    const { url, options } = PHOTO_POST(formData, token);
+    await request(url, options);
   }
 
   function handleImgChange({ target }) {
@@ -54,9 +54,9 @@ function UserPhotoPost() {
           onChange={handleImgChange}
         />
         {loading ? (
-          <Button disabled>...Postando</Button>
+          <Button disabled>Enviando...</Button>
         ) : (
-          <Button>Postar</Button>
+          <Button>Enviar</Button>
         )}
         <Error error={error} />
       </form>
@@ -70,6 +70,6 @@ function UserPhotoPost() {
       </div>
     </section>
   );
-}
+};
 
 export default UserPhotoPost;
