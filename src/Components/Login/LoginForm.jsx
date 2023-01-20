@@ -32,7 +32,7 @@ function LoginForm() {
         ) : (
           <Button>Entrar</Button>
         )}
-        <Error err={error} />
+        <Error error={error} />
       </form>
       <Link className={styles.perdeu} to="/login/perdeu">
         Perdeu a senha?
