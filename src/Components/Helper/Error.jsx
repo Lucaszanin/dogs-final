@@ -1,10 +1,10 @@
 import React from "react";
 
-export const Error = ({err}) => {
-  if (!err) return null;
+export const Error = ({ error }) => {
+  if (!error) return null;
   return (
     <>
-      <p style={{ color: "#F31", margin: "1rem 0" }}>{err}</p>
+      <p style={{ color: "#F31", margin: "1rem 0" }}>{error}</p>
     </>
   );
 };
